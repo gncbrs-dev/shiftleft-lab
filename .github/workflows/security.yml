@@ -1,0 +1,40 @@
+name: Shift-Left Security Checks
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install tools
+        run: |
+          pip install bandit checkov
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64 -o gitleaks
+          chmod +x gitleaks
+          sudo mv gitleaks /usr/local/bin/
+
+      - name: Run Bandit (SAST)
+        run: |
+          bandit -r app.py || exit 1
+
+      - name: Run Gitleaks (Secrets)
+        run: |
+          gitleaks detect --source=. --verbose --no-banner || exit 1
+
+      - name: Run Checkov (IaC)
+        run: |
+          checkov -d . || exit 1
+
