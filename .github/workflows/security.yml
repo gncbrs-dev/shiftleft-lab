@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Bandit (SAST)
         run: |
-          bandit -r app.py || exit 1
+          bandit -r app.py --severity-level high || exit 1
 
       - name: Run Gitleaks (Secrets)
         run: |

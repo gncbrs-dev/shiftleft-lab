@@ -5,6 +5,9 @@ app = Flask(__name__)
 # 🚨 Hardcoded secret (Semgrep + Gitleaks detect)
 API_KEY = "sk_live_1234567890abcdef"
 
+SECRET = "ghp_abcdef1234567890"
+
+
 @app.route("/search")
 def search():
     query = request.args.get("q")
